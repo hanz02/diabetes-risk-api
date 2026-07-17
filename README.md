@@ -8,11 +8,11 @@ Predict a patient's 5-year Type 2 diabetes risk from eight routine clinical meas
 
 > **[ ADD YOUR RENDER URL HERE ]** — e.g. `https://diabetes-risk-api.onrender.com`
 
-| Resource | Link |
-|---|---|
-| 🌐 Web app | `[ your Render URL ]/` |
-| 📘 Interactive API docs (Swagger) | `[ your Render URL ]/docs` |
-| ❤️ Service health check | `[ your Render URL ]/health` |
+| Resource                          | Link                         |
+| --------------------------------- | ---------------------------- |
+| 🌐 Web app                        | `[ your Render URL ]/`       |
+| 📘 Interactive API docs (Swagger) | `[ your Render URL ]/docs`   |
+| ❤️ Service health check           | `[ your Render URL ]/health` |
 
 > Note: the app is hosted on a free tier that sleeps after periods of inactivity. The first request after a while can take up to ~50 seconds while the service wakes up.
 
@@ -50,30 +50,30 @@ The full agentic workflow adds five layers around the API: a **Trigger** (schedu
 
 ## Tech Stack
 
-| Area | Tools |
-|---|---|
-| Language | Python 3.11 |
-| Data & ML | pandas, NumPy, scikit-learn |
-| Model | Logistic Regression (with median imputation + standard scaling in a single pipeline) |
-| API | FastAPI, Uvicorn, Pydantic |
-| Frontend | HTML, CSS, vanilla JavaScript (single file, no build step) |
-| Deployment | Render (cloud), joblib (model serialization) |
-| Automation | n8n, Google Gemini, Google Sheets, Gmail |
+| Area       | Tools                                                                                |
+| ---------- | ------------------------------------------------------------------------------------ |
+| Language   | Python 3.11                                                                          |
+| Data & ML  | pandas, NumPy, scikit-learn                                                          |
+| Model      | Logistic Regression (with median imputation + standard scaling in a single pipeline) |
+| API        | FastAPI, Uvicorn, Pydantic                                                           |
+| Frontend   | HTML, CSS, vanilla JavaScript (single file, no build step)                           |
+| Deployment | Render (cloud), joblib (model serialization)                                         |
+| Automation | n8n, Google Gemini, Google Sheets, Gmail                                             |
 
 ## The Dataset
 
 The model is trained on the **Pima Indians Diabetes Database** (768 records, 8 features, binary outcome), a public dataset from the U.S. National Institute of Diabetes and Digestive and Kidney Diseases.
 
-| Feature | Description |
-|---|---|
-| Pregnancies | Number of times pregnant |
-| Glucose | Plasma glucose concentration (mg/dL) |
-| BloodPressure | Diastolic blood pressure (mm Hg) |
-| SkinThickness | Triceps skin fold thickness (mm) |
-| Insulin | 2-hour serum insulin (mu U/ml) |
-| BMI | Body mass index |
+| Feature                  | Description                           |
+| ------------------------ | ------------------------------------- |
+| Pregnancies              | Number of times pregnant              |
+| Glucose                  | Plasma glucose concentration (mg/dL)  |
+| BloodPressure            | Diastolic blood pressure (mm Hg)      |
+| SkinThickness            | Triceps skin fold thickness (mm)      |
+| Insulin                  | 2-hour serum insulin (mu U/ml)        |
+| BMI                      | Body mass index                       |
 | DiabetesPedigreeFunction | Family-history-based likelihood score |
-| Age | Age in years |
+| Age                      | Age in years                          |
 
 ## Model Development Summary
 
