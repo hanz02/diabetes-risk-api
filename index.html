@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diabetes Risk Screening</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --card2: #273449;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent2: #0ea5e9;
+    --border: #334155;
+    --low: #22c55e;
+    --med: #f59e0b;
+    --high: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(160deg, #0f172a 0%, #131f38 100%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header { text-align: center; margin: 20px 0 8px; }
+  header h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.5px; }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--muted); margin-top: 8px; font-size: 15px; }
+  .badge {
+    display: inline-block; margin-top: 14px; padding: 5px 12px; border-radius: 999px;
+    background: rgba(56,189,248,0.12); color: var(--accent); font-size: 12px; font-weight: 600;
+    border: 1px solid rgba(56,189,248,0.3);
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 28px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .card h2 { font-size: 17px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+  .field input {
+    width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--card2); color: var(--text); font-size: 14px; transition: border 0.15s;
+  }
+  .field input:focus { outline: none; border-color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  button {
+    width: 100%; margin-top: 8px; padding: 13px; border: none; border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent)); color: #06121f;
+    font-size: 15px; font-weight: 700; cursor: pointer; transition: transform 0.1s, opacity 0.15s;
+  }
+  button:hover { transform: translateY(-1px); }
+  button:disabled { opacity: 0.6; cursor: default; transform: none; }
+  .samples { display: flex; gap: 8px; margin-top: 12px; }
+  .samples button {
+    margin: 0; padding: 8px; font-size: 12px; font-weight: 600; background: var(--card2);
+    color: var(--muted); border: 1px solid var(--border);
+  }
+  .result-empty { color: var(--muted); text-align: center; padding: 40px 10px; font-size: 14px; line-height: 1.7; }
+  .gauge { text-align: center; margin-bottom: 18px; }
+  .gauge .pct { font-size: 46px; font-weight: 800; line-height: 1; }
+  .gauge .lbl { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .risk-pill {
+    display: inline-block; margin: 14px auto 0; padding: 8px 20px; border-radius: 999px;
+    font-weight: 700; font-size: 15px; letter-spacing: 0.5px;
+  }
+  .bar { height: 10px; border-radius: 999px; background: var(--card2); overflow: hidden; margin: 18px 0 6px; }
+  .bar > div { height: 100%; border-radius: 999px; transition: width 0.6s ease; }
+  .verdict { font-size: 14px; line-height: 1.6; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); }
+  .verdict b { color: var(--text); }
+  .spin { display: inline-block; width: 15px; height: 15px; border: 2px solid #06121f; border-top-color: transparent; border-radius: 50%; animation: r 0.7s linear infinite; vertical-align: -2px; }
+  @keyframes r { to { transform: rotate(360deg); } }
+  footer { text-align: center; margin-top: 34px; color: var(--muted); font-size: 12.5px; line-height: 1.8; }
+  footer a { color: var(--accent); text-decoration: none; }
+  .disclaimer { margin-top: 10px; font-size: 11.5px; color: #64748b; max-width: 620px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Diabetes <span>Risk Screening</span></h1>
+    <p>Enter routine clinical measurements to estimate 5-year Type 2 diabetes risk.</p>
+    <div class="badge">Powered by a Logistic Regression model served via FastAPI</div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Patient measurements</h2>
+      <form id="form">
+        <div class="row">
+          <div class="field"><label>Pregnancies</label><input name="Pregnancies" type="number" step="any" min="0" value="2" required></div>
+          <div class="field"><label>Glucose (mg/dL)</label><input name="Glucose" type="number" step="any" min="0" value="168" required></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Blood Pressure (mm Hg)</label><input name="BloodPressure" type="number" step="any" min="0" value="74" required></div>
+          <div class="field"><label>Skin Thickness (mm)</label><input name="SkinThickness" type="number" step="any" min="0" value="33" required></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Insulin (mu U/ml)</label><input name="Insulin" type="number" step="any" min="0" value="120" required></div>
+          <div class="field"><label>BMI</label><input name="BMI" type="number" step="any" min="0" value="38" required></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Pedigree Function</label><input name="DiabetesPedigreeFunction" type="number" step="any" min="0" value="0.53" required></div>
+          <div class="field"><label>Age (years)</label><input name="Age" type="number" step="any" min="0" value="45" required></div>
+        </div>
+        <button type="submit" id="btn">Predict risk</button>
+        <div class="samples">
+          <button type="button" data-sample="high">Load high-risk example</button>
+          <button type="button" data-sample="low">Load low-risk example</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card" id="resultCard">
+      <h2>Result</h2>
+      <div class="result-empty" id="resultBody">
+        Fill in the measurements and click <b>Predict risk</b>.<br>
+        The model returns a probability and a Low / Medium / High risk band.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>Diabetes Risk Screening &mdash; end-to-end machine learning project (data mining, model, API, web app).</div>
+    <div style="margin-top:6px;"><a id="apiLink" href="/docs" target="_blank">API documentation</a> &nbsp;&middot;&nbsp; <a id="healthLink" href="/health" target="_blank">Service health</a></div>
+    <div class="disclaimer">This tool is a screening aid built for an academic project. It does not provide a medical diagnosis. Always consult a qualified healthcare professional.</div>
+  </footer>
+</div>
+
+<script>
+  const form = document.getElementById('form');
+  const btn = document.getElementById('btn');
+  const body = document.getElementById('resultBody');
+
+  const samples = {
+    high: { Pregnancies:2, Glucose:168, BloodPressure:74, SkinThickness:33, Insulin:120, BMI:38, DiabetesPedigreeFunction:0.53, Age:45 },
+    low:  { Pregnancies:1, Glucose:95, BloodPressure:70, SkinThickness:25, Insulin:80, BMI:24, DiabetesPedigreeFunction:0.20, Age:23 }
+  };
+
+  document.querySelectorAll('[data-sample]').forEach(b => {
+    b.addEventListener('click', () => {
+      const s = samples[b.dataset.sample];
+      for (const k in s) form.elements[k].value = s[k];
+    });
+  });
+
+  const colors = { Low: 'var(--low)', Medium: 'var(--med)', High: 'var(--high)' };
+  const messages = {
+    High: 'The model indicates an <b>elevated</b> risk of diabetes. A confirmatory test such as an OGTT or HbA1c is recommended.',
+    Medium: 'The model indicates a <b>moderate</b> risk. A follow-up review and lifestyle guidance would be sensible.',
+    Low: 'The model indicates a <b>low</b> risk based on these measurements. Routine monitoring is appropriate.'
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {};
+    for (const el of form.elements) {
+      if (el.name) payload[el.name] = parseFloat(el.value);
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Predicting...';
+    body.innerHTML = '<div class="result-empty">Contacting the model. If the service was idle it may take up to a minute to wake up...</div>';
+    try {
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Request failed (' + res.status + ')');
+      const d = await res.json();
+      const pct = (d.probability * 100).toFixed(1);
+      const color = colors[d.risk_level] || 'var(--accent)';
+      body.innerHTML = `
+        <div class="gauge">
+          <div class="pct" style="color:${color}">${pct}%</div>
+          <div class="lbl">estimated probability of diabetes</div>
+          <div class="risk-pill" style="background:${color}22;color:${color};border:1px solid ${color}55">${d.risk_level} risk</div>
+        </div>
+        <div class="bar"><div style="width:${pct}%;background:${color}"></div></div>
+        <div class="lbl" style="text-align:center;color:var(--muted);font-size:12px">Model prediction: <b style="color:var(--text)">${d.prediction_label}</b></div>
+        <div class="verdict">${messages[d.risk_level] || ''}</div>
+      `;
+    } catch (err) {
+      body.innerHTML = '<div class="result-empty" style="color:var(--high)">Could not reach the prediction service.<br>' + err.message + '<br><br>If this is the first request in a while, wait a moment and try again.</div>';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Predict risk';
+    }
+  });
+</script>
+</body>
+</html>
