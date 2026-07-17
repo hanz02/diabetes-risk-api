@@ -4,17 +4,39 @@ Predict a patient's 5-year Type 2 diabetes risk from eight routine clinical meas
 
 ## 🔗 Live Demo
 
-**Try the web app here:** <!-- 👉 PASTE YOUR RENDER LIVE LINK BELOW 👈 -->
+### 👉 **[Launch the web app](https://diabetes-risk-api-6j42.onrender.com/)**
 
-> **[ ADD YOUR RENDER URL HERE ]** — e.g. `https://diabetes-risk-api.onrender.com`
+| Resource                          | Link                                                                             |
+| --------------------------------- | -------------------------------------------------------------------------------- |
+| 🌐 Web app                        | https://diabetes-risk-api-6j42.onrender.com/                                     |
+| 📘 Interactive API docs (Swagger) | https://diabetes-risk-api-6j42.onrender.com/docs                                 |
+| ❤️ Service health check           | https://diabetes-risk-api-6j42.onrender.com/health                               |
 
-| Resource                          | Link                         |
-| --------------------------------- | ---------------------------- |
-| 🌐 Web app                        | `[ your Render URL ]/`       |
-| 📘 Interactive API docs (Swagger) | `[ your Render URL ]/docs`   |
-| ❤️ Service health check           | `[ your Render URL ]/health` |
+> **Note:** the app is hosted on Render's free tier, which sleeps after periods of inactivity. The first request after an idle period can take up to ~50 seconds while the service wakes up. Subsequent requests are fast.
 
-> Note: the app is hosted on a free tier that sleeps after periods of inactivity. The first request after a while can take up to ~50 seconds while the service wakes up.
+---
+
+## 📸 Screenshots
+
+### Web application
+
+![Diabetes Risk Screening web app](screenshots/webapp.png)
+
+_The single-page interface: enter a patient's eight measurements and receive an instant risk probability with a Low / Medium / High band and a plain-language recommendation._
+
+### Interactive API documentation
+
+![FastAPI Swagger docs](screenshots/api-docs.png)
+
+_Auto-generated Swagger UI at `/docs`, where the `/predict` endpoint can be tested live._
+
+### Agentic AI workflow (n8n)
+
+![n8n agentic workflow](screenshots/n8n-workflow.png)
+
+_The end-to-end automation: a scheduled trigger reads new patients, calls this prediction API, an AI agent reasons over the result, and a high-risk alert is emailed automatically._
+
+> **To add these images:** create a folder named `screenshots` in the repository root and drop in `webapp.png`, `api-docs.png`, and `n8n-workflow.png`. They will render automatically. You can remove any section whose image you do not have.
 
 ---
 
@@ -151,6 +173,7 @@ uvicorn app:app --reload
 ├── diabetes_model.pkl   # Trained scikit-learn pipeline
 ├── requirements.txt     # Python dependencies (scikit-learn pinned to training version)
 ├── DEPLOYMENT_GUIDE.md  # Step-by-step deployment notes
+├── screenshots/         # Images used in this README
 └── README.md
 ```
 
